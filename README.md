@@ -2,7 +2,9 @@
 
 一个基于Web的YouTube视频发布辅助工具，使用AI自动生成视频标题、摘要和标签。用Claude Code写的，本人完全不懂代码，只是告诉了Claude Code个人需求，可能功能上尚有不够完善之处，如需要修改或升级，请自行完成。😂
 
-工具在线访问地址：https://tutulifestyle.github.io/tutu-videotool/
+在线访问地址：https://tutulifestyle.github.io/tutu-videotool/
+
+注意：因为工具只在电脑上用，没有做手机端的适配。
 
 ## 🔒 隐私保护
 
