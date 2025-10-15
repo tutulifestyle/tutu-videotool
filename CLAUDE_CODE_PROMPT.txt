@@ -1,0 +1,243 @@
+=== 复制以下内容到Claude Code以重建项目 ===
+
+我需要创建一个YouTube视频发布辅助工具（TuTu视频发布工具），项目名称：tutu-videotool
+
+## 项目结构
+创建4个文件：
+1. index.html - 主HTML文件
+2. styles.css - 样式文件
+3. script.js - JavaScript逻辑
+4. favicon.svg - 网站图标（YouTube logo）
+
+## 核心功能需求
+
+### 1. 主要功能
+- 稿件录入区域，用户输入视频脚本
+- 使用AI并发生成三个内容：标题推荐（10个）、摘要（250字内）、标签（10+个）
+- 历史记录功能，保存最近10条生成记录
+- 支持导出历史记录为txt文件
+- 每个输出区域都有"复制"按钮
+
+### 2. AI服务商支持
+支持4种AI服务商，每个独立保存配置：
+- OpenAI: gpt-4o, gpt-4o-mini, gpt-4-turbo, gpt-3.5-turbo
+- DeepSeek: deepseek-chat, deepseek-reasoner
+- Gemini: gemini-2.0-flash-exp, gemini-1.5-pro, gemini-1.5-flash
+- 自定义API
+
+### 3. 界面布局（从上到下）
+**头部：**
+- YouTube红色logo（SVG）
+- 标题：TuTu视频发布工具
+- 右侧：主题切换按钮（🎨图标，4种颜色可选）
+
+**主体容器（1000px宽）：**
+1. 稿件录入卡片
+   - 左上：标题"稿件录入"
+   - 右上："历史"按钮（padding: 8px 16px, font-size: 14px）
+   - textarea输入框（min-height: 120px）
+   - "提交"按钮（padding: 8.8px 17.6px, font-size: 15.4px，带阴影效果）
+
+2. 标题推荐卡片
+   - 标题 + "复制"按钮
+   - 输出区域（min-height: 380px, max-height: 480px）
+
+3. 摘要生成卡片
+   - 标题 + "复制"按钮
+   - 输出区域（min-height: 200px, max-height: 300px）
+
+4. 标签生成卡片
+   - 标题 + "复制"按钮
+   - 输出区域（min-height: 100px, max-height: 150px）
+
+5. Prompt配置卡片
+   - 只有标题行和"配置"按钮，可折叠
+
+6. API配置卡片
+   - 标题和"折叠/配置"按钮
+   - 默认处于折叠状态
+   - 内容：AI服务商选择、API地址、API密钥、模型选择、测试连接按钮
+   - 底部：保存、导出配置、导入配置、一键还原按钮
+
+**页脚：**
+创意来源 @TuTu生活志（链接到YouTube频道）
+
+### 4. 三个模态框
+
+**Prompt配置模态框：**
+- 三个文本框：标题prompt、摘要prompt、标签prompt
+- 三个按钮：
+  - "修改默认"（打开另一个模态框）
+  - "还原默认"（恢复到默认prompt）
+  - "保存"（保存当前prompt）
+
+**默认Prompt配置模态框：**
+- 顶部红色警告："您的修改无法撤销，请谨慎进行。"
+- 三个文本框：显示当前默认prompt
+- 一个"保存"按钮（保存到localStorage.defaultPrompts）
+
+**历史记录模态框：**
+- 显示最近10条记录列表
+- 每条记录显示日期时间和前两行标题预览
+- 点击记录恢复内容（不关闭窗口）
+- 鼠标悬停：红色边框，无位移动画
+- 底部两个按钮：
+  - "清空"（带确认）
+  - "存档"（导出选中记录为txt）
+
+## 样式设计规范
+
+### 主题颜色（CSS变量 --theme-color）
+- 默认红色：#802520
+- 棕色：#6a4d43
+- 蓝色：#70808f
+- 绿色：#364023
+
+### 按钮统一规范
+所有标准按钮：
+- padding: 8px 16px
+- font-size: 14px
+- border-radius: 6px
+- 背景色：var(--theme-color)
+- 悬停：opacity: 0.85
+
+提交按钮特殊设计：
+- padding: 8.8px 17.6px（放大10%）
+- font-size: 15.4px
+- font-weight: 500
+- box-shadow: 0 2px 8px rgba(128, 37, 32, 0.3)
+- 悬停：阴影加深 + 上移1px
+- 点击：阴影减弱 + 回到原位
+
+### 卡片样式
+- 白色背景，圆角12px
+- box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
+- padding: 24px
+- 悬停：阴影加深
+
+## 默认Prompt内容
+
+标题prompt：
+"基于提供的视频脚本,想出10个既吸睛又有SEO优势的YouTube视频标题。标题应反映出鲜明的个人视频作者风格(字数建议25-35字),并在输出时直接排列,不要加序号或附加解释说明。重要：每个标题占一行，标题之间不要有空行，从上到下紧密排列。"
+
+摘要prompt：
+"基于提供的视频脚本,请进行极致的提炼(不丢失重要信息),用作youtube视频的简介,控制在250字以内。请注意:1.所有原文涉及到\"我\"、\"作者\"这样的第一人称代词,请改为\"TuTu\",并尽量用\"TuTu\"来替代\"她\"的用法。2.文本内容尽量精简、准确,同时注意适当加入些口语化内容,不显得生硬。3.开头必须以TuTu开始。5.同时检查所有英文内容的拼写错误。6.文本内容为一段，不分行。"
+
+标签prompt：
+"基于提供的视频脚本,将文中的关键词以出现频率、重要性、关联度、搜索优化等因素,提取至少10个与视频主体密切相关的词用于youtube视频的标签,方便相关视频的关联以及网络搜索优化,(开头需包含:TuTu生活志,tutu,tutu生活志,tutulifestyle,)然后请以这样的间隔英文逗号的格式输出,避免出现开头的四个标签:户晨风,峰哥亡命天涯,三大理论"
+
+## 技术实现要点
+
+### 1. localStorage数据结构
+```javascript
+// API配置（加密存储，使用XOR + Base64，密钥：'tutu-video-tool-2025'）
+apiConfigs: {
+  openai: { apiUrl, apiKey, model, availableModels[] },
+  deepseek: { ... },
+  gemini: { ... },
+  custom: { ... }
+}
+
+// 当前选择的服务商
+currentProvider: "openai"
+
+// 当前Prompt配置
+prompts: { title, summary, tags }
+
+// 用户自定义的默认Prompt
+defaultPrompts: { title, summary, tags }
+
+// 主题颜色
+themeColor: "#802520"
+
+// API配置折叠状态
+apiConfigCollapsed: "true"
+
+// 历史记录（最多10条）
+generationHistory: [
+  { script, title, summary, tags, timestamp }
+]
+```
+
+### 2. API调用
+**OpenAI/DeepSeek格式：**
+```javascript
+POST /v1/chat/completions
+{
+  model: "gpt-4o",
+  messages: [
+    { role: "system", content: prompt },
+    { role: "user", content: scriptText }
+  ],
+  temperature: 0.7
+}
+```
+
+**Gemini格式：**
+```javascript
+POST /v1beta/models/{model}:generateContent?key={apiKey}
+{
+  contents: [{
+    parts: [{ text: prompt + "\n\n视频脚本：\n" + scriptText }]
+  }]
+}
+```
+
+**并发执行：**
+使用 Promise.allSettled 同时发起三个请求
+
+### 3. 测试连接功能
+- OpenAI: GET /v1/models，过滤包含'gpt'的模型
+- DeepSeek: GET /v1/models
+- Gemini: GET /v1beta/models，过滤支持generateContent的模型
+- 获取的模型列表保存到配置的availableModels数组
+
+### 4. 历史记录导出格式
+```
+标题：
+[标题内容]
+
+摘要：
+[摘要内容]
+
+标签：
+[标签内容]
+
+视频稿件：
+[稿件内容]
+
+```
+文件名：202510150341.txt（年月日时分，纯数字）
+
+### 5. 关键交互逻辑
+- 点击"提交"：清空之前结果，显示"正在生成中..."，并发请求，显示结果
+- 生成成功：自动保存到历史记录
+- 点击"历史"：打开模态框，列出最近10条
+- 点击历史记录项：恢复内容到页面，添加selected样式，但不关闭窗口
+- 点击"存档"：如果没选中记录，提示"请先选择要存档的记录"
+- 点击"复制"：复制对应区域内容到剪贴板，显示提示消息
+- 主题切换：点击🎨按钮，下拉显示4个颜色圆点，点击切换CSS变量
+- API配置：默认折叠，点击"配置"展开，点击"折叠"收起
+- Prompt配置：点击"修改默认"打开新模态框，显示警告，只有"保存"按钮
+
+## 重要细节
+1. 所有按钮大小统一为 padding: 8px 16px, font-size: 14px（除提交按钮）
+2. 历史记录悬停：只有红色边框和背景色变化，无位移动画
+3. 提交按钮：带阴影，悬停时阴影加深并上移
+4. 模态框：点击外部关闭，有淡入动画
+5. 消息提示：3秒后自动消失
+6. 主题切换：保存到localStorage，刷新后保持
+7. API配置折叠状态：保存到localStorage，默认为折叠
+8. 配置导入导出：使用.tutuapi扩展名，内容加密
+9. 复制功能：使用navigator.clipboard.writeText
+10. 字体：PingFang SC, 苹方-简（中文优先）
+
+## favicon.svg内容
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 159 110">
+    <path fill="#FF0000" d="M154 17.5c-1.82-6.73-7.07-12-13.8-13.8-9.04-3.49-96.6-5.2-122 0.1-6.73 1.82-12 7.07-13.8 13.8-4.08 17.9-4.39 56.6 0.1 74.9 1.82 6.73 7.07 12 13.8 13.8 17.9 4.12 103 4.7 122 0 6.73-1.82 12-7.07 13.8-13.8 4.35-19.5 4.66-55.8-0.1-75z"/>
+    <path fill="#FFF" d="M105 55 64 31.5v47z"/>
+</svg>
+```
+
+请按照以上详细要求创建完整的4个文件（index.html, styles.css, script.js, favicon.svg），确保所有功能正常工作。
