@@ -4,7 +4,7 @@
 
 在线访问地址：https://tutulifestyle.github.io/tutu-videotool/
 
-注意：1.因为工具只在电脑上用，没有做手机端的适配。2.原本上传的是支持修改默认Prompt的版本，但考虑到用于展示要防篡改，所以重新上传了不支持修改默认Prompt，如果要完整版，在这里下载：[tutu-videotool.zip](tutu-videotool.zip)  3.想要知道每个文件都是做什么的，请看这里：[必读说明文件.txt](必读说明文件.txt)
+注意：1.因为工具只在电脑上用，没有做手机端的适配。2.原本上传的是支持修改默认Prompt的版本，但考虑到用于展示要防篡改，所以重新上传了不支持修改默认Prompt，如果要完整版，在这里下载：[tutu-videotool.zip](tutu-videotool.zip)  3.想要知道每个文件都是做什么的，请看这里：[必读说明文件.txt](必读说明文件.txt) 4.我在API配置中删除了Claude的支持，因为AI提示说它不支持在网页上使用。5.让Claude Code写这个工具时，我发过的一些中文指令，请看这里：[让Claude Code写程序时，我给的中文指令.md](让Claude Code写程序时，我给的中文指令.md)
 
 ## 🔒 隐私保护
 
