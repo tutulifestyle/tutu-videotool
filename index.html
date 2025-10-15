@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TuTu视频发布工具</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 头部 -->
+    <header class="header">
+        <div class="logo-container">
+            <svg class="youtube-logo" viewBox="0 0 159 110" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#FF0000" d="M154 17.5c-1.82-6.73-7.07-12-13.8-13.8-9.04-3.49-96.6-5.2-122 0.1-6.73 1.82-12 7.07-13.8 13.8-4.08 17.9-4.39 56.6 0.1 74.9 1.82 6.73 7.07 12 13.8 13.8 17.9 4.12 103 4.7 122 0 6.73-1.82 12-7.07 13.8-13.8 4.35-19.5 4.66-55.8-0.1-75z"/>
+                <path fill="#FFF" d="M105 55 64 31.5v47z"/>
+            </svg>
+            <h1 class="title">TuTu视频发布工具</h1>
+            <div class="theme-switcher">
+                <button class="theme-btn" id="themeSwitcherBtn">🎨</button>
+                <div class="theme-dropdown" id="themeDropdown">
+                    <div class="theme-option active" data-color="#802520" title="红色"></div>
+                    <div class="theme-option" data-color="#6a4d43" title="棕色"></div>
+                    <div class="theme-option" data-color="#70808f" title="蓝色"></div>
+                    <div class="theme-option" data-color="#364023" title="绿色"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 第1层：稿件录入 -->
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title">稿件录入</h2>
+                <button class="btn-copy" id="historyBtn">历史</button>
+            </div>
+            <div class="card-content">
+                <textarea id="scriptInput" class="script-textarea"></textarea>
+                <button id="submitBtn" class="btn-submit">提交</button>
+                <div id="submitMessage" class="message-box"></div>
+            </div>
+        </section>
+
+        <!-- 第2层：标题推荐 -->
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title">标题推荐</h2>
+                <button class="btn-copy" data-target="titleOutput">复制</button>
+            </div>
+            <div class="card-content">
+                <div id="titleOutput" class="output-area tall-output"></div>
+                <div id="titleMessage" class="message-box"></div>
+            </div>
+        </section>
+
+        <!-- 第3层：摘要生成 -->
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title">摘要生成</h2>
+                <button class="btn-copy" data-target="summaryOutput">复制</button>
+            </div>
+            <div class="card-content">
+                <div id="summaryOutput" class="output-area medium-output"></div>
+                <div id="summaryMessage" class="message-box"></div>
+            </div>
+        </section>
+
+        <!-- 第4层：标签生成 -->
+        <section class="card">
+            <div class="card-header">
+                <h2 class="card-title">标签生成</h2>
+                <button class="btn-copy" data-target="tagsOutput">复制</button>
+            </div>
+            <div class="card-content">
+                <div id="tagsOutput" class="output-area small-output"></div>
+                <div id="tagsMessage" class="message-box"></div>
+            </div>
+        </section>
+
+        <!-- 第5层：Prompt配置 -->
+        <section class="card">
+            <div class="card-header no-margin">
+                <h2 class="card-title">Prompt配置</h2>
+                <button id="configPromptBtn" class="btn-config">配置</button>
+            </div>
+        </section>
+
+        <!-- 第6层：API配置 -->
+        <section class="card" id="apiConfigCard">
+            <div class="card-header" id="apiCardHeader">
+                <h2 class="card-title">API配置</h2>
+                <button class="btn-collapse" id="apiCollapseBtn">折叠</button>
+            </div>
+            <div class="card-content" id="apiConfigContent">
+                <div class="form-group">
+                    <label for="aiProvider">AI服务商：</label>
+                    <select id="aiProvider" class="form-select">
+                        <option value="openai">OpenAI</option>
+                        <option value="deepseek">DeepSeek</option>
+                        <option value="gemini">Gemini</option>
+                        <option value="custom">自定义</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="apiUrl">API地址：</label>
+                    <input type="text" id="apiUrl" class="form-input" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="apiKey">API密钥：</label>
+                    <input type="password" id="apiKey" class="form-input" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="modelName">模型名称：</label>
+                    <div class="model-select-group">
+                        <select id="modelName" class="form-select">
+                            <option value="gpt-4o">gpt-4o</option>
+                            <option value="gpt-4o-mini">gpt-4o-mini</option>
+                            <option value="gpt-4-turbo">gpt-4-turbo</option>
+                        </select>
+                        <button id="testApiBtn" class="btn-test">测试连接</button>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button id="saveApiBtn" class="btn-primary">保存</button>
+                    <button id="exportConfigBtn" class="btn-secondary">导出配置</button>
+                    <button id="importConfigBtn" class="btn-secondary">导入配置</button>
+                    <button id="resetAllBtn" class="btn-warning">一键还原</button>
+                </div>
+                <input type="file" id="configFileInput" accept=".tutuapi" style="display: none;">
+                <div id="apiMessage" class="message-box"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 第7层：页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>创意来源 <a href="https://www.youtube.com/channel/UCuhAUKCdKrjYoMiJQc74ZkQ/" target="_blank">@TuTu生活志</a></p>
+        </div>
+    </footer>
+
+    <!-- Prompt配置模态框 -->
+    <div id="promptModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Prompt配置</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="prompt-group">
+                    <label for="titlePrompt">标题推荐 Prompt：</label>
+                    <textarea id="titlePrompt" class="prompt-textarea"></textarea>
+                </div>
+                <div class="prompt-group">
+                    <label for="summaryPrompt">摘要生成 Prompt：</label>
+                    <textarea id="summaryPrompt" class="prompt-textarea"></textarea>
+                </div>
+                <div class="prompt-group">
+                    <label for="tagsPrompt">标签生成 Prompt：</label>
+                    <textarea id="tagsPrompt" class="prompt-textarea"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="resetPromptsBtn" class="btn-secondary">还原默认</button>
+                <button id="savePromptsBtn" class="btn-primary">保存</button>
+            </div>
+            <div id="promptMessage" class="message-box"></div>
+        </div>
+    </div>
+
+    <!-- 历史记录模态框 -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>历史记录</h2>
+                <span class="close" id="historyModalClose">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="historyList" class="history-list">
+                    <!-- 历史记录将在这里动态生成 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="clearHistoryBtn" class="btn-secondary">清空</button>
+                <button id="exportHistoryBtn" class="btn-primary">存档</button>
+            </div>
+            <div id="historyMessage" class="message-box"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
