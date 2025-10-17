@@ -97,7 +97,7 @@ function bindEvents() {
     document.querySelectorAll('.btn-copy').forEach(btn => {
         if (btn.id !== 'historyBtn') {
             btn.addEventListener('click', (e) => {
-                const targetId = e.target.getAttribute('data-target');
+                const targetId = e.currentTarget.getAttribute('data-target');
                 copyToClipboard(targetId);
             });
         }
