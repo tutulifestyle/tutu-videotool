@@ -594,24 +594,66 @@ function displayResult(elementId, result, messageId) {
 // ========== 复制功能 ==========
 
 function copyToClipboard(elementId) {
-    const element = document.getElementById(elementId);
-    const text = element.textContent;
+      const element = document.getElementById(elementId);
+      const text = element.textContent;
 
-    // 获取对应的消息框ID
-    const messageId = elementId.replace('Output', 'Message');
+      // 获取对应的消息框ID
+      const messageId = elementId.replace('Output', 'Message');
 
-    if (!text || text.includes('正在生成') || text.includes('生成失败')) {
-        showMessage(messageId, '暂无可复制内容！', 'error');
-        return;
-    }
+      if (!text || text.includes('正在生成') || text.includes('生成失败')) {
+          showMessage(messageId, '暂无可复制内容！', 'error');
+          return;
+      }
 
-    navigator.clipboard.writeText(text).then(() => {
-        showMessage(messageId, '已复制到剪贴板！', 'success');
-    }).catch(err => {
-        console.error('复制失败:', err);
-        showMessage(messageId, '复制失败，请手动复制', 'error');
-    });
-}
+      // 检查是否支持 Clipboard API
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+          // 使用现代 Clipboard API
+          navigator.clipboard.writeText(text).then(() => {
+              showMessage(messageId, '已复制到剪贴板！', 'success');
+          }).catch(err => {
+              console.error('复制失败:', err);
+              // 如果失败，尝试备用方案
+              fallbackCopyToClipboard(text, messageId);
+          });
+      } else {
+          // 使用备用方案
+          fallbackCopyToClipboard(text, messageId);
+      }
+  }
+
+  // 备用复制方案（兼容旧浏览器和非安全上下文）
+  function fallbackCopyToClipboard(text, messageId) {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.top = '0';
+      textArea.style.left = '0';
+      textArea.style.width = '2em';
+      textArea.style.height = '2em';
+      textArea.style.padding = '0';
+      textArea.style.border = 'none';
+      textArea.style.outline = 'none';
+      textArea.style.boxShadow = 'none';
+      textArea.style.background = 'transparent';
+
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      try {
+          const successful = document.execCommand('copy');
+          if (successful) {
+              showMessage(messageId, '已复制到剪贴板！', 'success');
+          } else {
+              showMessage(messageId, '复制失败，请手动复制', 'error');
+          }
+      } catch (err) {
+          console.error('备用复制方案失败:', err);
+          showMessage(messageId, '复制失败，请手动复制', 'error');
+      }
+
+      document.body.removeChild(textArea);
+  }
 
 // ========== 消息提示功能 ==========
 
